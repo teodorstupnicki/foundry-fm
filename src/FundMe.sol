@@ -76,6 +76,10 @@ contract FundMe {
     function getFunder(uint256 index) external view returns (address) {
       return funders[index];
     }
+
+    function getOwner() public view returns (address) {
+      return i_owner;
+    }
 }
 
 // Concepts we didn't cover yet (will cover in later sections)
