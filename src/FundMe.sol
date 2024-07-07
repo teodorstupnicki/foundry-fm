@@ -56,17 +56,6 @@ contract FundMe {
         (bool callSuccess,) = payable(msg.sender).call{value: address(this).balance}("");
         require(callSuccess, "Call failed");
     }
-    // Explainer from: https://solidity-by-example.org/fallback/
-    // Ether is sent to contract
-    //      is msg.data empty?
-    //          /   \
-    //         yes  no
-    //         /     \
-    //    receive()?  fallback()
-    //     /   \
-    //   yes   no
-    //  /        \
-    //receive()  fallback()
 
     fallback() external payable {
         fund();
@@ -74,6 +63,18 @@ contract FundMe {
 
     receive() external payable {
         fund();
+    }
+    
+    function getAddressToAmountFunded(address fundingAddress)
+      external
+      view
+      returns (uint256)
+    {
+      return addressToAmountFunded[fundingAddress];
+    }
+
+    function getFunder(uint256 index) external view returns (address) {
+      return funders[index];
     }
 }
 
