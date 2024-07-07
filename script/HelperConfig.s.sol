@@ -32,14 +32,27 @@ contract HelperConfig is Script {
   }
 
   function getMainnetEthConfig() public pure returns (NetworkConfig memory) {
-        return NetworkConfig({
-            priceFeed: 0xfEefF7c3fB57d18C5C6Cdd71e45D2D0b4F9377bF // ETH / USD
+    NetworkConfig memory ethConfig = NetworkConfig({
+            priceFeed: 0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419 // ETH / USD
         });
+    return ethConfig;
+  }
+
+  function getOrCreateAnvilEthConfig() public returns (NetworkConfig memory) {
+    if (activeNetworkConfig.priceFeed != address(0)) {
+      return activeNetworkConfig;
     }
 
-  function getOrCreateAnvilEthConfig() public pure returns (NetworkConfig memory) {
-        return NetworkConfig({
-            priceFeed: 0xfEefF7c3fB57d18C5C6Cdd71e45D2D0b4F9377bF // ETH / USD
-        });
-    }
+    vm.startBroadcast();
+    MockV3Aggregator mockPriceFeed = new MockV3Aggregator(
+      DECIMALS,
+      INITIAL_PRICE
+    );
+    vm.stopBroadcast();
+    
+    NetworkConfig memory anvilConfig = NetworkConfig({
+      priceFeed: address(mockPriceFeed)  // ETH / USD
+    });
+    return anvilConfig;
+  }
 }
